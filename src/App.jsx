@@ -8,7 +8,9 @@ import {
   Calendar as CalendarIcon,
   Activity,
   Zap,
-  Hexagon
+  Hexagon,
+  FileSpreadsheet,
+  Save
 } from 'lucide-react';
 import { calculateLegacy } from './utils/calculator';
 import html2canvas from 'html2canvas';
@@ -58,6 +60,54 @@ function App() {
     }
   };
 
+  const handleExportCSV = () => {
+    if (!data) return;
+    const rows = [];
+    rows.push(['', 'PARENTAL LEGACY', '', '', '', '', '"Mother Value will be Higher on Dates- 1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,and 31"']);
+    rows.push(['LIFE FACTORS', 'MOTHER', 'FATHER', 'TOTAL', 'Minimum', 'Maximum', '"Father Value will be Higher on Dates - 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28 and 30 of the Month."']);
+    data.factors.forEach(f => {
+      rows.push([f.name, f.mother.toFixed(3), f.father.toFixed(3), f.total.toFixed(3), f.min.toFixed(3), f.max.toFixed(3), '']);
+    });
+    rows.push(['TOTAL', data.motherTotal.toFixed(3), data.fatherTotal.toFixed(3), data.grandTotal.toFixed(3), '"Values of Brown figures will always change but the total of all will come to 100"', '', '']);
+
+    const csvContent = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Quantum_Vedic_Legacy_${dob}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const [savedMessage, setSavedMessage] = useState('');
+  
+  const handleSaveResult = async () => {
+    if (dob && data) {
+      try {
+        const response = await fetch('http://localhost:5000/api/results/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dob, data })
+        });
+        
+        if (response.ok) {
+          setSavedMessage('Result saved successfully to database!');
+          setTimeout(() => setSavedMessage(''), 3000);
+        } else {
+          setSavedMessage('Failed to save. Ensure backend is running.');
+          setTimeout(() => setSavedMessage(''), 3000);
+        }
+      } catch (err) {
+        console.error(err);
+        setSavedMessage('Error connecting to backend.');
+        setTimeout(() => setSavedMessage(''), 3000);
+      }
+    }
+  };
+
   // Calculate percentage difference
   const diffPercent = data ? (Math.abs(data.motherTotal - data.fatherTotal) / ((data.motherTotal + data.fatherTotal) / 2) * 100).toFixed(2) : 0;
 
@@ -97,20 +147,35 @@ function App() {
 
       {/* Main Content */}
       <main className="main-content" id="dashboard-content">
-        <header className="flex-between" style={{ marginBottom: '40px' }}>
+        <header className="flex-between top-bar" style={{ marginBottom: '40px' }}>
           <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 500 }}>
             Analytics / <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Test.xlsx</span>
           </div>
-          <button onClick={handleExportPDF} className="btn">
-            <Download size={16} />
-            Export PDF
-          </button>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button onClick={handleExportCSV} className="btn" style={{ borderColor: 'var(--color-accent)' }}>
+              <FileSpreadsheet size={16} color="var(--color-accent)" />
+              Export CSV
+            </button>
+            <button onClick={handleExportPDF} className="btn">
+              <Download size={16} />
+              Export PDF
+            </button>
+            <button onClick={handleSaveResult} className="btn btn-primary">
+              <Save size={16} />
+              Save Result
+            </button>
+          </div>
         </header>
+        {savedMessage && (
+          <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '12px', borderRadius: '8px', marginBottom: '24px', textAlign: 'center', fontWeight: 'bold' }}>
+            {savedMessage}
+          </div>
+        )}
 
         {data && (
           <>
             {/* Control Section */}
-            <section className="card flex-between" style={{ marginBottom: '24px' }}>
+            <section className="card flex-between control-section" style={{ marginBottom: '24px' }}>
               <div>
                 <h3 style={{ fontSize: '1.1rem', marginBottom: '4px' }}>Dynamic Analysis Logic</h3>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
@@ -125,6 +190,7 @@ function App() {
                     value={dob}
                     onChange={handleDateSelect}
                     className="date-input"
+                    max={new Date().toISOString().split('T')[0]}
                   />
                 </div>
                 <button onClick={handleUpdateLogic} className="btn btn-primary">
@@ -135,7 +201,7 @@ function App() {
             </section>
 
             {/* Summary Cards */}
-            <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px', marginBottom: '40px' }}>
+            <section className="summary-cards-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px', marginBottom: '40px' }}>
               <div className="card">
                 <div className="flex-between">
                   <h4 style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Mother's Influence</h4>
@@ -173,7 +239,8 @@ function App() {
             {/* Data Table */}
             <section>
               <h3 style={{ fontSize: '1.1rem', marginBottom: '24px' }}>Detailed Factor Breakdown</h3>
-              <table className="data-table">
+              <div className="table-responsive">
+                <table className="data-table">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -205,6 +272,7 @@ function App() {
                   </tr>
                 </tbody>
               </table>
+              </div>
             </section>
           </>
         )}
