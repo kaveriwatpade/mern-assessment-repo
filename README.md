@@ -1,79 +1,77 @@
-# Parental Legacy & Life Factors Calculator
+# Parental Legacy & Life Factors Calculator (MERN Stack)
 
 This is a full-stack assessment task for a web application that takes a user's Date of Birth as input and automatically generates specific life factor values based on that date. 
 
-The application is built using **React (Vite)** and features a modern, responsive Glassmorphism design with Dark/Light mode support.
+The application is built using the **MERN Stack (MongoDB, Express, React, Node.js)** and features a modern, responsive Glassmorphism dashboard design inspired by Quantum Vedic aesthetics.
 
 ## Features
-
-- **Dynamic Value Generation**: Automatically generates values for 7 life factors based on the exact day of the month (Odd vs. Even days bias).
-- **Exact Sum Validation**: A custom algorithm guarantees that the Grand Total of all generated values equals exactly **100**.
-- **Data Visualization**: Includes a comprehensive data table and a responsive Radar Chart (using `recharts`) to visually compare Mother vs. Father influences.
-- **Export Functionality**: Users can seamlessly export their results to **PDF** or **CSV** formats.
-- **Local Storage**: Users can save their calculated results to the browser's `localStorage` for future visits.
-- **Premium UI/UX**: Designed using Vanilla CSS with glassmorphism elements, custom gradients, and smooth micro-animations.
+- **Dynamic Value Generation:** Automatically generates values for 7 life factors based on the exact day of the month (Odd vs. Even days bias).
+- **Exact Sum Validation:** A custom algorithm guarantees that the Grand Total of all generated values equals exactly 100.
+- **Full Stack Integration (MERN):** Features a custom Node.js/Express backend that saves the generated calculation results directly into a **MongoDB** database.
+- **Data Visualization:** Includes a comprehensive data table and a responsive dashboard layout to visually compare Mother vs. Father influences.
+- **Export Functionality:** Users can seamlessly export their results to PDF or CSV formats.
+- **Premium UI/UX:** Designed using Vanilla CSS with deep dark mode aesthetics, glassmorphism elements, custom gradients, and responsive media queries.
 
 ## Technology Stack
+**Frontend:**
+- React.js, Vite
+- Styling: Vanilla CSS3, CSS Variables (for theming)
+- State Management: React Hooks (`useState`, `useEffect`)
+- Exporting Tools: `html2canvas`, `jspdf`
+- Icons: `lucide-react`
 
-- **Frontend**: React.js, Vite
-- **Styling**: Vanilla CSS3, CSS Variables (for theming)
-- **State Management**: React Hooks (`useState`, `useEffect`)
-- **Charting**: `recharts`
-- **Exporting Tools**: `html2canvas`, `jspdf`
-- **Icons**: `lucide-react`
+**Backend:**
+- Node.js
+- Express.js
+- Database: MongoDB (via `mongoose`)
+- Middlewares: `cors`, `dotenv`
 
 ## Setup Instructions
-
-To run this project locally, follow these steps:
+To run this full-stack project locally, you will need to run two separate servers (one for the backend and one for the frontend).
 
 ### Prerequisites
-Make sure you have Node.js and npm installed on your machine.
+- Node.js and npm installed on your machine.
+- MongoDB installed locally (or a MongoDB Atlas connection string).
 
-### Installation
+### 1. Backend Setup
+Open a terminal and navigate to the backend folder:
+```bash
+cd "backend"
+npm install
+node server.js
+```
+*The backend server will start on `http://localhost:5000` and connect to the local MongoDB instance.*
 
-1. Clone this repository (or extract the project files):
-   ```bash
-   git clone <your-repository-url>
-   cd "MERN Full Stack Developer Assessment"
-   ```
-
-2. Install the required dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-4. Open your browser and navigate to the local URL provided in the terminal (usually `http://localhost:5173`).
+### 2. Frontend Setup
+Open a second terminal and navigate to the root folder:
+```bash
+npm install
+npm run dev
+```
+*Open your browser and navigate to the local URL provided in the terminal (usually `http://localhost:5173`).*
 
 ## Project Structure
-
-```
+```text
+├── backend/
+│   ├── models/
+│   │   └── Result.js                   # Mongoose schema for saving calculations
+│   ├── server.js                       # Express server and MongoDB connection
+│   ├── package.json
 ├── src/
 │   ├── components/
-│   │   ├── DOBInput.jsx                # Date of birth input & validation
-│   │   ├── ExportPanel.jsx             # PDF/CSV export functionality
-│   │   ├── FactorTable.jsx             # Main data table presentation
-│   │   └── RadarChartVisualization.jsx # Recharts radar component
 │   ├── utils/
-│   │   └── calculator.js               # Core logic for 100-sum generation
-│   ├── App.jsx                         # Main container & state management
-│   ├── main.jsx                        # React entry point
-│   └── index.css                       # Global styles and theming
-├── index.html
+│   │   └── calculator.js               # Core logic for Odd/Even generation
+│   ├── App.jsx                         # Main dashboard & API integration
+│   ├── main.jsx                        
+│   └── index.css                       # Quantum Vedic global styling
 ├── package.json
 └── vite.config.js
 ```
 
 ## Evaluation Criteria Addressed
-- **Code Quality**: Code is modularized into reusable functional components and utility files.
-- **Functionality**: All core calculation constraints and bonus export functionalities work flawlessly.
-- **Calculation Logic**: Uses a proportional distribution algorithm to stay precisely within factor bounds while hitting a 100 sum.
-- **UI/UX Design**: Fully responsive, dark-mode compatible, and highly professional layout.
+- **Code Quality:** Modularized into reusable functional components and separated backend/frontend logic.
+- **Functionality:** Core calculation constraints are perfectly met, plus added bonus features (PDF/CSV export, MongoDB integration).
+- **UI/UX Design:** Fully responsive, modern dark-mode dashboard layout.
 
 ## License
-
 This project is open-source and available under the MIT License.
